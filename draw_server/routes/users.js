@@ -35,37 +35,37 @@ router.post('/register', function(req, res, next) {
 
   if (!username){
     res.json({
-      "response":"",
+      "response":400,
       "msg":"No username given"
     });
   }
   if (!password){
     res.json({
-      "response":"",
+      "response":400,
       "msg":"No password given"
     });
   }
   if (!password_confirm){
     res.json({
-      "response":"",
+      "response":400,
       "msg":"No password_confirm given"
     });
   }
   if (!email){
     res.json({
-      "response":"",
+      "response":400,
       "msg":"No email given"
     });
   }
   if (!nickname){
     res.json({
-      "response":"",
+      "response":400,
       "msg":"No nickname given"
     });
   }
   if (password != password_confirm) {
     res.json({
-      "response":"",
+      "response":400,
       "msg":"Two passwords are not equal"
     });
   }
@@ -84,6 +84,7 @@ router.post('/register', function(req, res, next) {
   });
 }); 
 
+// Check existing users
 router.get('/check', function(req, res, next) {
   UserProfile.find()
     .then(function(doc) {
@@ -91,38 +92,40 @@ router.get('/check', function(req, res, next) {
     });
 });
 
+// Login
 router.post('/login', function(req, res, next) {
   let user = req.body.username;
   let pass = req.body.password;
   // Check param existance
   if (!user) {
     res.json({
-      "response":"",
+      "response":400,
       "msg":"No username given"
     });
   }
   if (!pass) {
     res.json({
-      "response":"",
+      "response":400,
       "msg":"No password given"
     });
   }
+  console.log(user);
+  console.log(pass);
   // Find user
   UserProfile.findOne({
     name: user,
     password: pass
   }, function(err, obj){
     console.log(obj);
-  })
-    .then(function(doc) {
+  }).then(function(doc) {
       if (!doc) {
         res.json({
-          "response":"",
+          "response":400,
           "msg":"Login Failed"
         });
       }else {
         res.json({
-          "response":"200",
+          "response":200,
           "msg":"Login Success"
         });
       }

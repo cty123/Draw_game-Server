@@ -2,10 +2,14 @@
 <head>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js"></script>
         <script>  
-                var socket = io.connect('http://localhost:4200');
+                var socket = io.connect('ws://localhost:4200');
                 socket.on('connect', function(data) {
                     socket.emit('join', 'Hello World from client');
                 });
+                // var exampleSocket = new WebSocket("ws://127.0.0.1:4200");
+                // exampleSocket.onopen = function (event) {
+                //     exampleSocket.send("connect"); 
+                // };
         </script>
 </head>
 <body>
