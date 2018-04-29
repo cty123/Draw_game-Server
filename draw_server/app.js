@@ -12,7 +12,9 @@ var app = express();
 
 // Socket.io init
 var server = require('http').createServer(app);  
-var io = require('socket.io')(server);
+var socketEvents = require('./socketEvents');  
+const io = require('socket.io')(server);
+socketEvents(io);
 server.listen(4200); 
 
 // view engine setup
@@ -43,11 +45,6 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   //res.render('error');
-});
-
-// Implement socket.io functions
-io.on('connection', function(client) {  
-  console.log('Client connected...');
 });
 
 module.exports = app;

@@ -4,7 +4,11 @@
         <script>  
                 var socket = io.connect('ws://localhost:4200');
                 socket.on('connect', function(data) {
-                    socket.emit('join', 'Hello World from client');
+                    socket.emit('draw', 'Hello World from client');
+                });
+
+                socket.on('draw', function(data){
+                    document.writeln(data);
                 });
                 // var exampleSocket = new WebSocket("ws://127.0.0.1:4200");
                 // exampleSocket.onopen = function (event) {

@@ -1,21 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/test');
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
-  console.log("Mongodb connection: Success");
-});
-
-var UserProfileSchema = mongoose.Schema({
-  name: {type: String, required: true},
-  password: {type: String, required: true},
-  email: String,
-  nickname: String,
-})
-
-var UserProfile = mongoose.model("UserProfile", UserProfileSchema);
+var UserProfile = require('../models/user')
 
 
 /*
