@@ -11,11 +11,10 @@ var roomRouter = require('./routes/room');
 var app = express();
 
 // Socket.io init
-var server = require('http').createServer(app);  
 var socketEvents = require('./socketEvents');  
-const io = require('socket.io')(server);
-socketEvents(io);
-server.listen(4200); 
+const WebSocket = require('ws');
+const wss = new WebSocket.Server({ port: 8080 });
+socketEvents(wss);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

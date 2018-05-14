@@ -1,8 +1,22 @@
 var UserProfile = require("./models/user");
 
-exports = module.exports = function(io){
+exports = module.exports = function(wss){
+    var rooms = [];
+
+    const handle_create_room = function() {
+        
+    }
+
+    const handle_join_room = function() {
+
+    }
+
+    const handle_leave_room = function() {
+
+    }
+
     // Implement socket.io functions
-    io.on('connection', function(socket) {  
+    wss.on('connection', function(socket) {  
         socket.on('start', function(data){
             // Check if the user is the owner
 
@@ -56,15 +70,25 @@ exports = module.exports = function(io){
             io.sockets.emit('draw', data);
             console.log("draw: " + data);
         });
-    
-        socket.on('msg', function(data) {
-            console.log(data)
-        });
-    
-        socket.on('guess', function(data) {
-            console.log(data)
+        
+        socket.on('message', function incoming(message) {
+            console.log("received: " + message);
+            const data = JSON.parse(message);
+            type = data["type"];
+            switch (type) {
+                case 'create_room':
+                    socket.send(JSON.stringify({
+                        res: "OK"
+                    }));
+                case 'join':
+
+                case 'start':
+
+                case 'draw':
+            }
         });
 
+        socket.send("Welcome");
         console.log('Client connected...');
     });
 }
