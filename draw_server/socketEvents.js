@@ -1,7 +1,6 @@
 var UserProfile = require("./models/user");
 
 exports = module.exports = function(wss){
-    var rooms = [];
 
     const handle_create_room = function() {
         
@@ -15,8 +14,11 @@ exports = module.exports = function(wss){
 
     }
 
+    var rooms = [];
+
     // Implement socket.io functions
     wss.on('connection', function(socket) {  
+
         socket.on('start', function(data){
             // Check if the user is the owner
 
@@ -76,12 +78,34 @@ exports = module.exports = function(wss){
             const data = JSON.parse(message);
             type = data["type"];
             switch (type) {
-                case 'create_room':
-                    socket.send(JSON.stringify({
-                        res: "OK"
-                    }));
                 case 'join':
-
+                    const room_name = data["room_name"];
+                    rooms[room_name].push(socket);
+                    socket.send(JSON.stringify({
+                        res: "Room joined"
+                    }));
+                    console.log(rooms[room_name]);
+                    break;
+                case 'create_room':
+                    const new_name = data["room_name"];
+                    rooms[new_name] = [];
+                    rooms[new_name].push(socket);
+                    socket.send(JSON.stringify({
+                        res: "Room created"
+                    }));
+                    break;
+                case 'broadcast':
+                    const room = data["room_name"];
+                    const message = data["message"];
+                    rooms[room].forEach(sock => {
+                        sock.send(JSON.stringify({
+                            type: "broadcast",
+                            msg: message
+                        }));
+                    });
+                    break;
+                case 'get_friend':
+                    
                 case 'start':
 
                 case 'draw':

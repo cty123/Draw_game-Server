@@ -6,6 +6,8 @@ var UserProfile = require('../models/user');
 /* GET home page. */
 router.get('/', function(req, res, next) {
   Room.find()
+    .populate('owner')
+    .populate('members')
     .then(doc => {
       res.json({
         "res": "OK",
@@ -28,8 +30,9 @@ router.post('/', function(req, res, next){
       name: name,
       owner: user
     });
+    new_room.members.push(user);
     new_room.save();
-    user.room = new_room;
+    user.room = new_room
     user.save();
     res.json({
       "res": "OK"

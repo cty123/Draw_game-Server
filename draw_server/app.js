@@ -10,7 +10,7 @@ var roomRouter = require('./routes/room');
 
 var app = express();
 
-// Socket.io init
+// Socket init
 var socketEvents = require('./socketEvents');  
 const WebSocket = require('ws');
 const wss = new WebSocket.Server({ port: 8080 });
