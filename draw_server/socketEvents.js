@@ -38,40 +38,26 @@ exports = module.exports = function(wss){
 
     var rooms = [];
 
+    wss.on('close', function close() {
+        console.log('disconnected');
+    });
+
     // Implement socket.io functions
-    wss.on('connection', function(socket) {  
-
-        socket.on('join', function(data){
-            // Check if the room exist
-
-            // if exist
-
-                // Boardcast the members in the room -- emit message
-
-                // Add the user to the room -- emit message
-
-                // Add in database
-                
-            // if not -- emit error message
-            console.log(data);
-        });
-    
-        socket.on('create_room', function(data) {
-            // Check if the room already exist
-
-            // Assign current user as room owner
-            console.log(data);
-        });
-    
-        socket.on('draw', function(data) {
-            io.sockets.emit('draw', data);
-            console.log("draw: " + data);
+    wss.on('connection', function(socket) {
+        
+        socket.on("error", (err) => {
+            console.log("Caught flash policy server socket error: ")
+            console.log(err.stack)
         });
         
+        socket.on('close', function close(){
+            console.log('disconnected');
+        });
+
         socket.on('message', function incoming(message) {
             console.log("received: " + message);
             const data = JSON.parse(message);
-            type = data["type"];
+            var type = data["type"];
             switch (type) {
                 case 'join':
                     const room_name = data["room_name"];
@@ -132,23 +118,51 @@ exports = module.exports = function(wss){
                             }));
                         }
                         */
-                        room_broadcast("testing", "Start", "Game Started");
-                        rooms["testing"].forEach(player => {
-                            console.log(rooms["testing"].length);
-                            player.send(JSON.stringify({
-                                res: "Acting User",
-                                msg: "It's your turn to draw"
-                            }));
-                        });
+                        let start_room = data["room_name"]; 
+                        room_broadcast(start_room, "Start", "Game Started");
+                        rooms[start_room]["player"] = 0;
+                        rooms[start_room][0].send(JSON.stringify({
+                            res: "Acting User",
+                            msg: "It's your turn to draw"
+                        }));
                     //});
                     break;
                 case 'time_out':
+                    let num = ++rooms["testing"]["player"];
+                    if (num == rooms["testing"].length) {
+                        room_broadcast("testing", "Game Over", "Game Over");
+                    }else {
+                        rooms["testing"][num].send(JSON.stringify({
+                            res: "Acting User",
+                            msg: "It's your turn to draw"
+                        }));
+                        room_broadcast_others("testing", "Next Round", "Next Round");
+                    }
                     break;
                 case 'draw':
+                    draw_room = data["room_name"];
+                    let start_x = data["start_x"];
+                    let start_y = data["start_y"];
+                    let end_x = data["end_x"];
+                    let end_y = data["end_y"];
+                    rooms[draw_room].forEach(player => {
+                        if (player != socket) {
+                            player.send(JSON.stringify({
+                                "room_name": draw_room,
+                                "res": "draw",
+                                "start_x": start_x,
+                                "start_y": start_y,
+                                "end_x": end_x,
+                                "end_y": end_y
+                            }));
+                        }
+                    });
                     break;
                 case 'guess':
                     break;
             }
+
+
         });
 
         socket.send("Welcome");
